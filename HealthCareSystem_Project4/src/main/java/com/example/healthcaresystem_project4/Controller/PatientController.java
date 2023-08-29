@@ -19,9 +19,9 @@ public class PatientController {
         return ResponseEntity.status(200).body(patientService.getAllPatient());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity addNewPatient(@RequestBody @Valid Patient patient){
-        patientService.addPatient(patient);
+    @PostMapping("/add/{doctor_id}")
+    public ResponseEntity addNewPatient(@PathVariable Integer doctor_id ,@RequestBody @Valid Patient patient){
+        patientService.addPatient(doctor_id,patient);
         return ResponseEntity.status(200).body(new ApiResponse("the patient '"+patient.getName() +"' added successfully"));
     }
 
@@ -51,6 +51,12 @@ public class PatientController {
     @GetMapping("order")
     public ResponseEntity orderPatientAsec(){
         return ResponseEntity.status(200).body(patientService.patientsOrdered());
+    }
+
+    @PutMapping("/assign/{room_id}/assign/{patient_id}")
+    public ResponseEntity assignRoomToPatientController(@PathVariable Integer room_id, @PathVariable Integer patient_id){
+        patientService.assignRoomToPatient(room_id, patient_id);
+        return ResponseEntity.status(200).body(new ApiResponse("Assigned room to patient successfully"));
     }
 
 

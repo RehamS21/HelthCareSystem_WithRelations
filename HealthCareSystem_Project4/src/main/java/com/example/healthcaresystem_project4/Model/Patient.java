@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @Entity
@@ -33,15 +35,21 @@ public class Patient {
     @NotNull(message = "patient money must not null")
     @Positive(message = "patient salary must be a positive")
     @Column(columnDefinition = "int not null")
-    private Integer money;
+    private Integer balance;
 
     @Column(columnDefinition = "BOOLEAN default false")
     private Boolean appointment = false;
 
-    @NotNull(message = "Doctor id must not be null")
-    @Positive
-    @Column(columnDefinition = "int  not null")
-    private Integer doctorid;
+    @ManyToOne
+    @JoinColumn(name = "doctor_id" , referencedColumnName = "id")
+    private Doctor doctor;
 
+    @ManyToOne
+    @JoinColumn(name =  "room_id", referencedColumnName = "id")
+    private Room room;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "patient")
+    @JsonIgnore
+    private Set<Bill> bills;
 
 }

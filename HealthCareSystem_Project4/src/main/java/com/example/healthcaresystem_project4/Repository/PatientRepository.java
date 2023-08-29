@@ -21,9 +21,9 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
     @Query("select p from Patient p where p.id =?1 and p.age < 18")
     Patient discountBillPatient(Integer id );
 
-    @Query("select p from Patient p order by p.money asc ")
+    @Query("select p from Patient p order by p.balance asc ")
     List<Patient> orderPatientByMoney();
 
-    @Query("select count (p.doctorid) from Patient p where p.doctorid=?1")
+    @Query("select count (p.doctor.id) from Patient p where p.doctor.id=?1")
     Integer numberOfPatient(Integer doctorid);
 }

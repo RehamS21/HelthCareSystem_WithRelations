@@ -21,9 +21,6 @@ public class RoomService {
     }
 
     public void addRoom(Room room){
-        Patient p = patientRepository.findPatientById(room.getPatientId());
-        if (p == null)
-            throw new ApiException("Patient id is wrong");
         roomRepository.save(room);
     }
 
@@ -33,12 +30,7 @@ public class RoomService {
         if (oldRoom == null)
             throw new ApiException("Sorry, room id is wrong");
 
-        Patient p = patientRepository.findPatientById(oldRoom.getPatientId());
-        if (p==null)
-            throw new ApiException("Sorry the patient id is wrong");
-
         oldRoom.setRoomtype(room.getRoomtype());
-        oldRoom.setPatientId(room.getPatientId());
 
         roomRepository.save(oldRoom);
     }

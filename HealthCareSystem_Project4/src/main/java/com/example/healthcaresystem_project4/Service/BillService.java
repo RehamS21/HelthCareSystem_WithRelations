@@ -21,11 +21,12 @@ public class BillService {
         return billRepository.findAll();
     }
 
-    public void addBill(Bill bill){
-        Patient patient = patientRepository.findPatientById(bill.getPatientid());
+    public void addBill(Integer patient_id,Bill bill){
+        Patient patient = patientRepository.findPatientById(patient_id);
         if (patient == null)
-            throw new ApiException("patient id is wrong");
+            throw new ApiException("Sorry , the patient id is wrong");
 
+        bill.setPatient(patient);
         billRepository.save(bill);
     }
 
@@ -35,12 +36,8 @@ public class BillService {
         if (oldBill == null)
             throw new ApiException("Sorry, bill id is wrong");
 
-        Patient patient = patientRepository.findPatientById(bill.getPatientid());
-        if (patient == null)
-            throw new ApiException("Sorry, patient id is wrong");
 
         oldBill.setBillprice(bill.getBillprice());
-        oldBill.setPatientid(bill.getPatientid());
 
         billRepository.save(oldBill);
     }
@@ -53,6 +50,7 @@ public class BillService {
         if (deleteBill == null)
             throw new ApiException("Sorry, bill id is wrong");
 
+        deleteBill.setPatient(null);
         billRepository.delete(deleteBill);
     }
 
@@ -62,21 +60,18 @@ public class BillService {
         if (bill == null)
             throw new ApiException("bill id is wrong");
 
-        Patient patient = patientRepository.findPatientById(bill.getPatientid());
-        if (patient == null)
-            throw new ApiException("No bull for this patient");
 
 
         // calculate the bill for patient:
-        Integer billResult = patient.getMoney() - bill.getBillprice() ;
+        Integer billResult = bill.getPatient().getBalance() - bill.getBillprice() ;
 
         if (billResult < 0)
-            throw new ApiException("The money of patient not sufficient");
+            throw new ApiException("The balance of patient not sufficient");
 
-        patient.setMoney(billResult);
-        patientRepository.save(patient);
+        bill.getPatient().setBalance(billResult);
+        patientRepository.save(bill.getPatient());
 
-        return patient.getMoney();
+        return bill.getPatient().getBalance();
     }
 
 
@@ -86,7 +81,7 @@ public class BillService {
         if (bill == null)
             throw new ApiException("Sorry the bill id is wrong");
 
-        Patient patient = patientRepository.discountBillPatient(bill.getPatientid());
+        Patient patient = patientRepository.discountBillPatient(bill.getPatient().getId());
 
         if (patient == null)
             throw new ApiException("Sorry, the discount only for the patient where age < 18");
@@ -99,8 +94,11 @@ public class BillService {
         return billDiscount;
     }
 
+    public void assignBillToPatient(Integer bill_id , Integer patient_id){
+        Bill bill = billRepository.findBillById(bill_id);
+        Patient patient = patientRepository.findPatientById(patient_id);
 
-
-
-
+        if (bill == null || patient == null)
+            throw new ApiException("Sorry the bill id or patient id is wrong");
+    }
 }

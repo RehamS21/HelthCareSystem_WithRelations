@@ -35,7 +35,9 @@ public class Doctor {
     private Double salary;
 
 
-
+    @OneToMany(cascade = CascadeType.ALL , mappedBy = "doctor")
+    @JsonIgnore
+    private Set<Patient> patients;
 
 
 }

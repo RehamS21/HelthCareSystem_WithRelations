@@ -1,5 +1,6 @@
 package com.example.healthcaresystem_project4.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -7,6 +8,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -21,9 +24,9 @@ public class Room {
     @Column(columnDefinition = "varchar(30) not null, check( roomtype = 'emergency' or roomtype ='intensive care' or roomtype = 'operating' or roomtype = 'hypnosis')")
     private String roomtype;
 
-    @NotNull(message = "patient id must not null")
-    @Positive
-    // must be unique becuase no two paitent have a same room
-    @Column(columnDefinition = "int unique not null")
-    private Integer patientId;
+
+
+    @OneToMany(cascade = CascadeType.ALL , mappedBy = "room")
+    @JsonIgnore
+    private Set<Patient> patients;
 }

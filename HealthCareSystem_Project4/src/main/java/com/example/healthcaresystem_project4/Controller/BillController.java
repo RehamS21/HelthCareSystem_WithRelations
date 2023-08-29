@@ -19,9 +19,9 @@ public class BillController {
         return ResponseEntity.status(200).body(billService.getAllBill());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity addNewBill(@RequestBody @Valid Bill bill){
-        billService.addBill(bill);
+    @PostMapping("/add/{patient_id}")
+    public ResponseEntity addNewBill(@PathVariable Integer patient_id,@RequestBody @Valid Bill bill){
+        billService.addBill(patient_id,bill);
         return ResponseEntity.status(200).body(new ApiResponse("the bill added successfully"));
     }
 
@@ -49,5 +49,6 @@ public class BillController {
 
         return ResponseEntity.status(200).body(new ApiResponse("The bill after discount = "+result));
     }
+
 
 }

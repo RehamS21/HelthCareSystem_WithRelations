@@ -17,15 +17,12 @@ public class Bill {
     private Integer id;
 
 
-    @NotNull(message = "patient id must not empty")
-    @Column(columnDefinition = "int unique not null")
-    private Integer patientid;
-
-
     @NotNull(message = "The bill price must not null")
     @Positive
     @Column(columnDefinition = "int not null")
     private Integer billprice;
 
-
+    @ManyToOne
+    @JoinColumn(name = "patient_id", referencedColumnName = "id")
+    private Patient patient;
 }

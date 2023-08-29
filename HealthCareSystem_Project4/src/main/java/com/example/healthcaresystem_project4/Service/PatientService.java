@@ -1,11 +1,14 @@
 package com.example.healthcaresystem_project4.Service;
 
 import com.example.healthcaresystem_project4.Api.ApiException;
-import com.example.healthcaresystem_project4.Api.ApiResponse;
+import com.example.healthcaresystem_project4.Model.Bill;
 import com.example.healthcaresystem_project4.Model.Doctor;
 import com.example.healthcaresystem_project4.Model.Patient;
+import com.example.healthcaresystem_project4.Model.Room;
+import com.example.healthcaresystem_project4.Repository.BillRepository;
 import com.example.healthcaresystem_project4.Repository.DoctorRepository;
 import com.example.healthcaresystem_project4.Repository.PatientRepository;
+import com.example.healthcaresystem_project4.Repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +19,20 @@ import java.util.List;
 public class PatientService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
+    private final BillRepository billRepository;
+    private final RoomRepository roomRepository;
 
     public List<Patient> getAllPatient(){
         return patientRepository.findAll();
     }
 
-    public void addPatient(Patient patient){
-        Doctor doctor = doctorRepository.findDoctorById(patient.getDoctorid());
+    public void addPatient(Integer doctor_id, Patient patient){
+//        assignDoctorToPatient(doctor_id, patient.getId());
+        Doctor doctor = doctorRepository.findDoctorById(doctor_id);
         if (doctor == null)
             throw new ApiException("Sorry the doctor id is wrong");
 
+        patient.setDoctor(doctor);
         patientRepository.save(patient);
     }
 
@@ -35,14 +42,11 @@ public class PatientService {
         if (oldPatient == null)
             throw new ApiException("Sorry, patient id is wrong");
 
-        Doctor doctor = doctorRepository.findDoctorById(patient.getDoctorid());
-        if (doctor == null)
-            throw new ApiException("Sorry the doctor is wrong");
 
         oldPatient.setName(patient.getName());
         oldPatient.setAge(patient.getAge());
         oldPatient.setPhone(patient.getPhone());
-        oldPatient.setMoney(patient.getMoney());
+        oldPatient.setBalance(patient.getBalance());
         oldPatient.setAppointment(patient.getAppointment());
 
 
@@ -82,6 +86,31 @@ public class PatientService {
             throw new ApiException("Sorry , No patients exist");
 
         return patients;
+    }
+
+    public void assignDoctorToPatient(Integer doctor_id, Integer patient_id){
+        Doctor doctor = doctorRepository.findDoctorById(doctor_id);
+        Patient patient = patientRepository.findPatientById(patient_id);
+
+        if (doctor == null || patient == null)
+            throw new ApiException("Sorry , the patient or doctor id are wrong");
+
+        patient.setDoctor(doctor);
+
+        patientRepository.save(patient);
+
+    }
+
+    public void assignRoomToPatient(Integer room_id , Integer patient_id){
+        Room room = roomRepository.findRoomById(room_id);
+        Patient patient = patientRepository.findPatientById(patient_id);
+
+        if (room == null || patient == null)
+            throw new ApiException("Sorry , the patient or room id is wrong");
+
+        patient.setRoom(room);
+
+        patientRepository.save(patient);
     }
 
 
